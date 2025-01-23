@@ -11,7 +11,10 @@
 #define PORT 5050
 #define LG_MESSAGE 256
 
-// Fonction pour afficher la grille de jeu
+/**
+ * Fonction pour afficher la grille de jeu
+ * @param grille La grille de jeu
+ */
 void afficher_grille(char grille[3][3]) {
     printf(" %c | %c | %c\n", grille[0][0], grille[0][1], grille[0][2]);
     printf("---|---|---\n");
@@ -21,7 +24,11 @@ void afficher_grille(char grille[3][3]) {
     printf("\n");
 }
 
-// Fonction pour vérifier si un joueur a gagné
+/**
+ * Fonction pour vérifier si un joueur a gagné
+ * @param grille La grille de jeu
+ * @param joueur Le joueur à vérifier
+ */
 int verifier_victoire(char grille[3][3], char joueur) {
     for (int i = 0; i < 3; i++) {
         if (grille[i][0] == joueur && grille[i][1] == joueur && grille[i][2] == joueur) return 1;
@@ -32,7 +39,10 @@ int verifier_victoire(char grille[3][3], char joueur) {
     return 0;
 }
 
-// Fonction pour vérifier si la grille est pleine
+/**
+ * Fonction pour vérifier si la grille est pleine
+ * @param grille La grille de jeu
+ */
 int grille_pleine(char grille[3][3]) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -42,7 +52,12 @@ int grille_pleine(char grille[3][3]) {
     return 1;
 }
 
-// Fonction pour choisir une case aléatoire vide dans la grille
+/**
+ * Fonction pour choisir une case aléatoire dans la grille
+ * @param grille La grille de jeu
+ * @param x Pointeur vers la ligne de la case choisie
+ * @param y Pointeur vers la colonne de la case choisie
+ */
 void choisir_case_aleatoire(char grille[3][3], int *x, int *y) {
     do {
         *x = rand() % 3;
@@ -50,6 +65,9 @@ void choisir_case_aleatoire(char grille[3][3], int *x, int *y) {
     } while (grille[*x][*y] != ' ');
 }
 
+/**
+ * Fonction main
+ */
 int main(int argc, char *argv[]) {
     int socketEcoute;
     struct sockaddr_in pointDeRencontreLocal;

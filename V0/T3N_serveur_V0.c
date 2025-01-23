@@ -11,7 +11,10 @@
 #define PORT 5050
 #define LG_MESSAGE 256
 
-// Fonction pour afficher la grille de jeu
+/**
+ * Fonction pour afficher la grille de jeu
+ * @param grille La grille de jeu
+ */
 void afficher_grille(char grille[3][3]) {
     printf(" %c | %c | %c\n", grille[0][0], grille[0][1], grille[0][2]);
     printf("---|---|---\n");
@@ -21,7 +24,12 @@ void afficher_grille(char grille[3][3]) {
     printf("\n");
 }
 
-// Fonction pour choisir une case aléatoire vide dans la grille
+/**
+ * Fonction pour choisir une case aléatoire dans la grille
+ * @param grille La grille de jeu
+ * @param x Pointeur vers la ligne de la case choisie
+ * @param y Pointeur vers la colonne de la case choisie
+ */
 void choisir_case_aleatoire(char grille[3][3], int *x, int *y) {
     do {
         *x = rand() % 3;
@@ -29,6 +37,9 @@ void choisir_case_aleatoire(char grille[3][3], int *x, int *y) {
     } while (grille[*x][*y] != ' ');
 }
 
+/**
+ * Fonction principale
+ */
 int main(int argc, char *argv[]) {
     int socketEcoute;
     struct sockaddr_in pointDeRencontreLocal;

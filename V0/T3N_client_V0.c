@@ -9,7 +9,10 @@
 
 #define LG_MESSAGE 256
 
-// Fonction pour afficher la grille de jeu
+/**
+ * Fonction pour afficher la grille de jeu
+ * @param grille La grille de jeu
+ */
 void afficher_grille(char grille[3][3]) {
     printf(" %c | %c | %c\n", grille[0][0], grille[0][1], grille[0][2]);
     printf("---|---|---\n");
@@ -19,6 +22,9 @@ void afficher_grille(char grille[3][3]) {
     printf("\n");
 }
 
+/**
+ * Fonction principale
+ */
 int main(int argc, char *argv[]){
     int descripteurSocket;
     struct sockaddr_in sockaddrDistant;
