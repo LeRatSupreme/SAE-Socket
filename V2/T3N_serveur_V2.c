@@ -110,9 +110,11 @@ int main(int argc, char *argv[]) {
         }
         printf("Joueur X connecté !\n");
 
-        // Envoyer le message "start" et le symbole 'X' au joueur X
+        // Envoyer le message "start" au joueur X
         strcpy(messageRecu, "start");
         send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
+
+        // Envoyer le symbole 'X' au joueur X
         strcpy(messageRecu, "X");
         send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
 
@@ -126,8 +128,11 @@ int main(int argc, char *argv[]) {
         }
         printf("Joueur O connecté !\n");
 
-        // Envoyer le message "start" et le symbole 'O' au joueur O
+        // Envoyer le message "start" au joueur O
+        strcpy(messageRecu, "start");
         send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
+
+        // Envoyer le symbole 'O' au joueur O
         strcpy(messageRecu, "O");
         send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
 
