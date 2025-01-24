@@ -110,8 +110,10 @@ int main(int argc, char *argv[]) {
         }
         printf("Joueur X connecté !\n");
 
-        // Envoyer le message "start" au joueur X
+        // Envoyer le message "start" et le symbole 'X' au joueur X
         strcpy(messageRecu, "start");
+        send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
+        strcpy(messageRecu, "X");
         send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
 
         // Acceptation de la deuxième connexion entrante (joueur O)
@@ -124,7 +126,9 @@ int main(int argc, char *argv[]) {
         }
         printf("Joueur O connecté !\n");
 
-        // Envoyer le message "start" au joueur O
+        // Envoyer le message "start" et le symbole 'O' au joueur O
+        send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
+        strcpy(messageRecu, "O");
         send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
 
         // Initialisation de la grille de jeu

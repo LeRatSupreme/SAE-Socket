@@ -83,6 +83,18 @@ int main(int argc, char *argv[]) {
     }
     printf("Début de la partie!\n");
 
+    // Réception du symbole du joueur (X ou O)
+    nb = recv(descripteurSocket, buffer, LG_MESSAGE, 0);
+    if (nb == -1) {
+        perror("Erreur en lecture...");
+        close(descripteurSocket);
+        exit(-5);
+    }
+    buffer[nb] = '\0';
+    char joueurSymbole = buffer[0];
+    char adversaireSymbole = (joueurSymbole == 'X') ? 'O' : 'X';
+    printf("Vous jouez avec le symbole : %c\n", joueurSymbole);
+
     // Initialisation de la grille de jeu
     char grille[3][3] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
     afficher_grille(grille);
@@ -112,7 +124,7 @@ int main(int argc, char *argv[]) {
                     printf("Valeur invalide. Veuillez entrer des valeurs entre 0 et 2 pour une case vide.\n");
                 }
             }
-            grille[x][y] = 'X';
+            grille[x][y] = joueurSymbole;
             afficher_grille(grille);
 
             // Envoi du coup au serveur
@@ -121,11 +133,11 @@ int main(int argc, char *argv[]) {
             if (nb == -1) {
                 perror("Erreur en écriture...");
                 close(descripteurSocket);
-                exit(-5);
+                exit(-7);
             }
         } else if (strncmp(buffer, "continue", 8) == 0) {
             sscanf(buffer + 9, "%d %d", &x, &y);
-            grille[x][y] = 'O';
+            grille[x][y] = adversaireSymbole;
             afficher_grille(grille);
         } else if (strncmp(buffer, "Owins", 5) == 0) {
             sscanf(buffer + 6, "%d %d", &x, &y);
