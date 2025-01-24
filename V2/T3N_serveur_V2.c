@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
         while (1) {
             int x, y;
             int socketActuel = (joueurActuel == 1) ? socketDialogue1 : socketDialogue2;
+            int socketAdverse = (joueurActuel == 1) ? socketDialogue2 : socketDialogue1;
             char joueurSymbole = (joueurActuel == 1) ? 'X' : 'O';
 
             // Informer le joueur actuel que c'est son tour
@@ -159,7 +160,9 @@ int main(int argc, char *argv[]) {
                 close(socketDialogue2);
                 exit(-6);
             } else if (lus == 0) {
-                fprintf(stderr, "La socket a été fermée par le client !\n\n");
+                printf("Le joueur %c s'est déconnecté !\n", joueurSymbole);
+                sprintf(messageRecu, "Le joueur %c s'est déconnecté !", joueurSymbole);
+                send(socketAdverse, messageRecu, strlen(messageRecu) + 1, 0);
                 close(socketDialogue1);
                 close(socketDialogue2);
                 break;
@@ -186,7 +189,6 @@ int main(int argc, char *argv[]) {
 
                 // Envoyer le coup au joueur adverse
                 sprintf(messageRecu, "continue %d %d", x, y);
-                int socketAdverse = (joueurActuel == 1) ? socketDialogue2 : socketDialogue1;
                 send(socketAdverse, messageRecu, strlen(messageRecu) + 1, 0);
 
                 // Changer de joueur

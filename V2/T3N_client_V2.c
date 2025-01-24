@@ -163,6 +163,9 @@ int main(int argc, char *argv[]) {
             afficher_grille(grille);
             printf("Le joueur X gagne!\n");
             break;
+        } else if (strncmp(buffer, "Le joueur", 9) == 0) {
+            printf("%s\n", buffer);
+            break;
         } else {
             printf("Erreur : message inattendu du serveur : %s\n", buffer);
             break;
