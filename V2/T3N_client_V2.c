@@ -103,8 +103,15 @@ int main(int argc, char *argv[]) {
         if (strncmp(buffer, "yourturn", 8) == 0) {
             printf("C'est votre tour!\n");
             // Lecture du coup du joueur
-            printf("Entrez votre coup (ligne colonne) : ");
-            scanf("%d %d", &x, &y);
+            while (1) {
+                printf("Entrez votre coup (ligne colonne) : ");
+                scanf("%d %d", &x, &y);
+                if (x >= 0 && x <= 2 && y >= 0 && y <= 2 && grille[x][y] == ' ') {
+                    break;
+                } else {
+                    printf("Valeur invalide. Veuillez entrer des valeurs entre 0 et 2 pour une case vide.\n");
+                }
+            }
             grille[x][y] = 'X';
             afficher_grille(grille);
 
