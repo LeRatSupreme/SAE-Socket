@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <time.h>
 
-#define PORT 5060
+#define PORT 5050
 #define LG_MESSAGE 256
 
 /**
