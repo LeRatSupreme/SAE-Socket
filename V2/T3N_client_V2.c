@@ -132,10 +132,16 @@ int main(int argc, char *argv[]) {
             afficher_grille(grille);
             printf("La grille est pleine, pas de gagnant!\n");
             break;
-        } else if (strcmp(buffer, "Xend") == 0) {
+        } else if (strncmp(buffer, "Xend", 4) == 0) {
+            sscanf(buffer + 5, "%d %d", &x, &y);
+            grille[x][y] = 'X';
+            afficher_grille(grille);
             printf("La grille est pleine, pas de gagnant!\n");
             break;
-        } else if (strcmp(buffer, "Xwins") == 0) {
+        } else if (strncmp(buffer, "Xwins", 5) == 0) {
+            sscanf(buffer + 6, "%d %d", &x, &y);
+            grille[x][y] = 'X';
+            afficher_grille(grille);
             printf("Le joueur X gagne!\n");
             break;
         } else {
