@@ -10,6 +10,7 @@
 
 #define PORT 5050
 #define LG_MESSAGE 256
+#define MAX_SPECTATEURS 10
 
 /**
  * Fonction pour afficher la grille de jeu
@@ -55,11 +56,13 @@ int grille_pleine(char grille[3][3]) {
 /**
  * Fonction main
  */
-int main(int argc, char *argv[]) {
+int main() {
     int socketEcoute;
     struct sockaddr_in pointDeRencontreLocal;
     socklen_t longueurAdresse;
-    int socketDialogue1, socketDialogue2;
+    int socketDialogue1 = 0, socketDialogue2 = 0, socketSpectateur = 0;
+    int spectateurs[MAX_SPECTATEURS];
+    int nb_spectateurs = 0;
     struct sockaddr_in pointDeRencontreDistant;
     char messageRecu[LG_MESSAGE];
     int lus;
@@ -96,6 +99,8 @@ int main(int argc, char *argv[]) {
     // Initialisation du générateur de nombres aléatoires
     srand(time(NULL));
 
+    char grille[3][3] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
+
     while (1) {
         memset(messageRecu, 0x00, LG_MESSAGE);
         printf("Attente d’une demande de connexion (quitter avec Ctrl-C)\n\n");
@@ -128,7 +133,7 @@ int main(int argc, char *argv[]) {
         }
         printf("Joueur O connecté !\n");
 
-        // Envoyer le message "start" au joueur O
+         // Envoyer le message "start" au joueur O
         strcpy(messageRecu, "start");
         send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
 
@@ -136,68 +141,83 @@ int main(int argc, char *argv[]) {
         strcpy(messageRecu, "O");
         send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
 
-        // Initialisation de la grille de jeu
-        char grille[3][3] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
-        afficher_grille(grille);
-
-        int joueurActuel = 1; 
-
-        while (1) {
-            int x, y;
-            int socketActuel = (joueurActuel == 1) ? socketDialogue1 : socketDialogue2;
-            int socketAdverse = (joueurActuel == 1) ? socketDialogue2 : socketDialogue1;
-            char joueurSymbole = (joueurActuel == 1) ? 'X' : 'O';
-
-            // Informer le joueur actuel que c'est son tour
-            strcpy(messageRecu, "yourturn");
-            send(socketActuel, messageRecu, strlen(messageRecu) + 1, 0);
-
-            // Réception du coup du joueur actuel
-            lus = recv(socketActuel, messageRecu, LG_MESSAGE, 0);
-            if (lus == -1) {
-                perror("read");
-                close(socketDialogue1);
-                close(socketDialogue2);
-                exit(-6);
-            } else if (lus == 0) {
-                printf("Le joueur %c s'est déconnecté !\n", joueurSymbole);
-                sprintf(messageRecu, "Le joueur %c s'est déconnecté !", joueurSymbole);
-                send(socketAdverse, messageRecu, strlen(messageRecu) + 1, 0);
-                close(socketDialogue1);
-                close(socketDialogue2);
-                break;
-            } else {
-                sscanf(messageRecu, "%d %d", &x, &y);
-                grille[x][y] = joueurSymbole;
-                afficher_grille(grille);
-
-                // Vérifier si le joueur actuel a gagné
-                if (verifier_victoire(grille, joueurSymbole)) {
-                    sprintf(messageRecu, "%cwins %d %d", joueurSymbole, x, y);
-                    send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
-                    send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
-                    break;
-                }
-
-                // Vérifier si la grille est pleine
-                if (grille_pleine(grille)) {
-                    sprintf(messageRecu, "%cend %d %d", joueurSymbole, x, y);
-                    send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
-                    send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
-                    break;
-                }
-
-                // Envoyer le coup au joueur adverse
-                sprintf(messageRecu, "continue %d %d", x, y);
-                send(socketAdverse, messageRecu, strlen(messageRecu) + 1, 0);
-
-                // Changer de joueur
-                joueurActuel = (joueurActuel == 1) ? 2 : 1;
-            }
+        // Acceptation des spectateurs
+        socketSpectateur = accept(socketEcoute, (struct sockaddr *)&pointDeRencontreDistant, &longueurAdresse);
+        if (socketSpectateur < 0) {
+            perror("accept");
+            close(socketSpectateur);
+            close(socketEcoute);
+            exit(-5);
         }
+        printf("Spectateur connecté !\n");
+        spectateurs[nb_spectateurs++] = socketSpectateur;
 
-        close(socketDialogue1);
-        close(socketDialogue2);
+        if (socketDialogue1 != 0 && socketDialogue2 != 0) {
+            afficher_grille(grille);
+
+            int joueurActuel = 1;
+
+            while (1) {
+                int x, y;
+                int socketActuel = (joueurActuel == 1) ? socketDialogue1 : socketDialogue2;
+                int socketAdverse = (joueurActuel == 1) ? socketDialogue2 : socketDialogue1;
+                char joueurSymbole = (joueurActuel == 1) ? 'X' : 'O';
+
+                // Informer le joueur actuel que c'est son tour
+                strcpy(messageRecu, "yourturn");
+                send(socketActuel, messageRecu, strlen(messageRecu) + 1, 0);
+
+                // Réception du coup du joueur actuel
+                lus = recv(socketActuel, messageRecu, LG_MESSAGE, 0);
+                if (lus == -1) {
+                    perror("read");
+                    close(socketDialogue1);
+                    close(socketDialogue2);
+                    exit(-6);
+                } else if (lus == 0) {
+                    printf("Le joueur %c s'est déconnecté !\n", joueurSymbole);
+                    sprintf(messageRecu, "Le joueur %c s'est déconnecté !", joueurSymbole);
+                    send(socketAdverse, messageRecu, strlen(messageRecu) + 1, 0);
+                    close(socketDialogue1);
+                    close(socketDialogue2);
+                    break;
+                } else {
+                    sscanf(messageRecu, "%d %d", &x, &y);
+                    grille[x][y] = joueurSymbole;
+                    afficher_grille(grille);
+
+                     // Vérifier si le joueur actuel a gagné
+                    if (verifier_victoire(grille, joueurSymbole)) {
+                        sprintf(messageRecu, "%cwins %d %d", joueurSymbole, x, y);
+                        send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
+                        send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
+                        break;
+                    }
+
+                     // Vérifier si la grille est pleine
+                    if (grille_pleine(grille)) {
+                        sprintf(messageRecu, "%cend %d %d", joueurSymbole, x, y);
+                        send(socketDialogue1, messageRecu, strlen(messageRecu) + 1, 0);
+                        send(socketDialogue2, messageRecu, strlen(messageRecu) + 1, 0);
+                        break;
+                    }
+
+                     // Envoyer le coup au joueur adverse
+                    sprintf(messageRecu, "continue %d %d", x, y);
+                    send(socketAdverse, messageRecu, strlen(messageRecu) + 1, 0);
+                    send(socketSpectateur, messageRecu, strlen(messageRecu) + 1, 0);
+
+                     // Changer de joueur
+                    joueurActuel = (joueurActuel == 1) ? 2 : 1;
+                }
+            }
+
+            close(socketDialogue1);
+            close(socketDialogue2);
+            socketDialogue1 = 0;
+            socketDialogue2 = 0;
+            memset(grille, ' ', sizeof(grille)); 
+        }
     }
     close(socketEcoute);
     return 0;

@@ -1,9 +1,9 @@
-# T3N - Tic-Tac-Toe Net (Version 1)
+# T3N - Tic-Tac-Toe Net (Version 2)
 
 ## Description du projet
 T3N (Tic-Tac-Toe Net) est une application en C permettant à deux joueurs de s'affronter en ligne au jeu du Morpion via une communication client-serveur utilisant des sockets en TCP/IP. Ce projet est réalisé dans le cadre de la SAÉ 3.01 du BUT Informatique et vise à approfondir la maîtrise des communications réseau en C.
 
-## Fonctionnalités de la Version 1
+## Fonctionnalités de la Version 2
 La version 2 de T3N introduit de nouvelles fonctionnalités et améliorations par rapport à la version 1 :
 - Deux joueurs peuvent se connecter au serveur et jouer en tant que **X** et **O**.
 - Les joueurs se connectent au serveur et attendent le message de début de partie.
@@ -30,11 +30,11 @@ gcc -o T3N_serveur_V2 T3N_serveur_V2.c
 ### Exécution
 Lancez d'abord le serveur :
 ```bash
-./T3N_serveur_V1
+./T3N_serveur_V2
 ```
 Puis le client sur un autre terminal :
 ```bash
-./T3N_client_V1 <IP du serveur> <5050>
+./T3N_client_V2 <IP du serveur> <5050>
 ```
 
 ## Architecture et Organigramme
